@@ -105,12 +105,6 @@
 #define PR_SET_PTRACER 0x59616d61
 #endif
 
-// A wrapper for the tgkill syscall: send a signal to a specific thread.
-static int tgkill(pid_t tgid, pid_t tid, int sig) {
-  return syscall(__NR_tgkill, tgid, tid, sig);
-  return 0;
-}
-
 namespace google_breakpad {
 
 namespace {
@@ -130,6 +124,11 @@ bool handlers_installed = false;
 stack_t old_stack;
 stack_t new_stack;
 bool stack_installed = false;
+
+// A wrapper for the tgkill syscall: send a signal to a specific thread.
+int tgkill(pid_t tgid, pid_t tid, int sig) {
+  return syscall(__NR_tgkill, tgid, tid, sig);
+}
 
 // Create an alternative stack to run the signal handlers on. This is done since
 // the signal might have been caused by a stack overflow.
