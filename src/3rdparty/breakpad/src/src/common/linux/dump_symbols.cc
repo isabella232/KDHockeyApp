@@ -64,8 +64,9 @@
 #include "common/linux/elfutils-inl.h"
 #include "common/linux/elf_symbols_to_module.h"
 #include "common/linux/file_id.h"
-#include "common/memory.h"
+#include "common/memory_allocator.h"
 #include "common/module.h"
+#include "common/path_helper.h"
 #include "common/scoped_ptr.h"
 #ifndef NO_STABS_SUPPORT
 #include "common/stabs_reader.h"
@@ -610,7 +611,6 @@ bool LoadSymbols(const string& obj_file,
   typedef typename ElfClass::Addr Addr;
   typedef typename ElfClass::Phdr Phdr;
   typedef typename ElfClass::Shdr Shdr;
-  typedef typename ElfClass::Word Word;
 
   Addr loading_addr = GetLoadingAddress<ElfClass>(
       GetOffset<ElfClass, Phdr>(elf_header, elf_header->e_phoff),
@@ -618,8 +618,6 @@ bool LoadSymbols(const string& obj_file,
   module->SetLoadAddress(loading_addr);
   info->set_loading_addr(loading_addr, obj_file);
 
-  Word debug_section_type =
-      elf_header->e_machine == EM_MIPS ? SHT_MIPS_DWARF : SHT_PROGBITS;
   const Shdr* sections =
       GetOffset<ElfClass, Shdr>(elf_header, elf_header->e_shoff);
   const Shdr* section_names = sections + elf_header->e_shstrndx;
@@ -675,9 +673,19 @@ bool LoadSymbols(const string& obj_file,
 
     // Look for DWARF debugging information, and load it if present.
     const Shdr* dwarf_section =
-      FindElfSectionByName<ElfClass>(".debug_info", debug_section_type,
+      FindElfSectionByName<ElfClass>(".debug_info", SHT_PROGBITS,
                                      sections, names, names_end,
                                      elf_header->e_shnum);
+
+    // .debug_info section type is SHT_PROGBITS for mips on pnacl toolchains,
+    // but MIPS_DWARF for regular gnu toolchains, so both need to be checked
+    if (elf_header->e_machine == EM_MIPS && !dwarf_section) {
+      dwarf_section =
+        FindElfSectionByName<ElfClass>(".debug_info", SHT_MIPS_DWARF,
+                                       sections, names, names_end,
+                                       elf_header->e_shnum);
+    }
+
     if (dwarf_section) {
       found_debug_info_section = true;
       found_usable_info = true;
@@ -752,9 +760,19 @@ bool LoadSymbols(const string& obj_file,
     // Dwarf Call Frame Information (CFI) is actually independent from
     // the other DWARF debugging information, and can be used alone.
     const Shdr* dwarf_cfi_section =
-        FindElfSectionByName<ElfClass>(".debug_frame", debug_section_type,
+        FindElfSectionByName<ElfClass>(".debug_frame", SHT_PROGBITS,
                                        sections, names, names_end,
                                        elf_header->e_shnum);
+
+    // .debug_frame section type is SHT_PROGBITS for mips on pnacl toolchains,
+    // but MIPS_DWARF for regular gnu toolchains, so both need to be checked
+    if (elf_header->e_machine == EM_MIPS && !dwarf_cfi_section) {
+      dwarf_cfi_section =
+          FindElfSectionByName<ElfClass>(".debug_frame", SHT_MIPS_DWARF,
+                                        sections, names, names_end,
+                                        elf_header->e_shnum);
+    }
+
     if (dwarf_cfi_section) {
       // Ignore the return value of this function; even without call frame
       // information, the other debugging information could be perfectly
@@ -860,16 +878,6 @@ const char* ElfArchitecture(const typename ElfClass::Ehdr* elf_header) {
   }
 }
 
-// Return the non-directory portion of FILENAME: the portion after the
-// last slash, or the whole filename if there are no slashes.
-string BaseFileName(const string &filename) {
-  // Lots of copies!  basename's behavior is less than ideal.
-  char* c_filename = strdup(filename.c_str());
-  string base = basename(c_filename);
-  free(c_filename);
-  return base;
-}
-
 template<typename ElfClass>
 bool SanitizeDebugFile(const typename ElfClass::Ehdr* debug_elf_header,
                        const string& debuglink_file,
@@ -920,7 +928,7 @@ bool InitModuleForElfClass(const typename ElfClass::Ehdr* elf_header,
     return false;
   }
 
-  string name = BaseFileName(obj_filename);
+  string name = google_breakpad::BaseName(obj_filename);
   string os = "Linux";
   // Add an extra "0" at the end.  PDB files on Windows have an 'age'
   // number appended to the end of the file identifier; this isn't

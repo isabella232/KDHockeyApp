@@ -1,1 +1,23 @@
-https://chromium.googlesource.com/breakpad/breakpad	2ecb2baba829a7ed4fff4bc60edf0c1643dc129c
+This copy of Google Breakpad was fetched on 2017-10-24,
+and is based upon the following git checkouts:
+
+src
+    https://chromium.googlesource.com/breakpad/breakpad
+    commit 2aaeead73fbc70860c6bc0ff477500f84ab595e9
+
+src/src/third_party/protobuf/protobuf
+    https://github.com/google/protobuf.git
+    commit cb6dd4ef5f82e41e06179dcd57d3b1d9246ad6ac
+
+src/src/third_party/lss
+    https://chromium.googlesource.com/linux-syscall-support
+    commit e6527b0cd469e3ff5764785dadcb39bf7d787154
+
+src/src/tools/gyp
+    https://chromium.googlesource.com/external/gyp
+    commit 324dd166b7c0b39d513026fa52d6280ac6d56770
+
+src/src/testing
+    https://github.com/google/googletest.git
+    commit ec44c6c1675c25b9827aacd08c02433cccde7780
+

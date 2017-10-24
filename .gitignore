@@ -1,1 +1,3 @@
 *.user
+
+/src/3rdparty/breakpad/src/android/sample_app/libs
