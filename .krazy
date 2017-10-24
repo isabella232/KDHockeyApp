@@ -1,0 +1,7 @@
+CHECKSETS qt5,c++,foss
+
+#KDAB-specific checks
+EXTRA kdabcopyright
+
+#do not check 3rdparty stuff
+SKIP /src/3rdparty/

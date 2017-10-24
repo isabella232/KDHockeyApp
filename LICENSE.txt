@@ -1,0 +1,16 @@
+KD HockeyApp is distributed under two licenses.
+You may choose the terms of either:
+
+ * The Mozilla Public License (MPL) v2.0
+
+ or
+
+ * The GNU Lesser General Public License (LGPL) v2.1 and v3
+
+----------------------------------------------------------------------
+
+Software distributed under these licenses is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied.  See the corresponding
+LICENSE file for specific language governing rights and limitations under the License.
+
+     All Rights Reserved.

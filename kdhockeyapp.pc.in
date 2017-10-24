@@ -1,0 +1,11 @@
+prefix=$$PREFIX
+libdir=$$LIBDIR
+includedir=$$INCLUDEDIR
+
+Name: KDHockeyApp
+Version: $$VERSION
+Description: HockeyApp bindings for Qt
+Cflags: -I${includedir}/KDHockeyApp
+Libs: ${libdir}/$${QMAKE_PREFIX_STATICLIB}KDHockeyApp.$${QMAKE_EXTENSION_STATICLIB} \
+      ${libdir}/$${QMAKE_PREFIX_STATICLIB}KDHockeyAppBreakpad.$${QMAKE_EXTENSION_STATICLIB}
+
