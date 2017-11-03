@@ -23,7 +23,7 @@ android {
     !silent: breakpad_ndkbuild += V=1
 
     breakpad_build.depends = $$_PRO_FILE_ $$files(src/client/linux/*.cc, true)
-    breakpad_build.target = $$BREAKPAD_BUILDDIR/libbreakpad_client.a
+    breakpad_build.target = $$BREAKPAD_LIBRARY
     breakpad_build.commands = $$breakpad_ndkbuild
 
     breakpad_clean.commands = $$breakpad_ndkbuild clean
@@ -68,7 +68,7 @@ android {
     silent: breakpad_configure.commands += --enable-silent-rules
 
     breakpad_build.depends = breakpad_configure FORCE
-    breakpad_build.target = $$BREAKPAD_BUILDDIR/src/client/linux/libbreakpad_client.a
+    breakpad_build.target = $$BREAKPAD_LIBRARY
     breakpad_build.commands = +\$(MAKE) -C $$BREAKPAD_BUILDDIR
 
     breakpad_clean.commands = +\$(MAKE) -C $$BREAKPAD_BUILDDIR clean
@@ -81,7 +81,7 @@ android {
 } else: ios: CONFIG(device, device|simulator) {
     BREAKPAD_SRCDIR=$$PWD/src/src/client/ios
 
-    breakpad_build.target = $$BREAKPAD_BUILDDIR/libBreakpad.a
+    breakpad_build.target = $$BREAKPAD_LIBRARY
     breakpad_build.commands = xcodebuild \
         BUILD_DIR=$$OUT_PWD \
         CLANG_CXX_LIBRARY=libc++ \
