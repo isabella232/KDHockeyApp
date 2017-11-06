@@ -14,7 +14,8 @@ android {
     TARGET_FILENAME = $$TARGET
 }
 
-!isEmpty(DESTDIR): TARGET_FILENAME = $$DESTDIR/$$TARGET_FILENAME
+# DESTDIR on iOS is to be avoided as it's not really working correctly.
+!ios: !isEmpty(DESTDIR): TARGET_FILENAME = $$DESTDIR/$$TARGET_FILENAME
 
 isEmpty(BREAKPAD_BUILDDIR): BREAKPAD_BUILDDIR = $$shadowed($$PWD/build-target)
 isEmpty(BREAKPAD_HOSTDIR): BREAKPAD_HOSTDIR = $$BREAKPAD_BUILDDIR
