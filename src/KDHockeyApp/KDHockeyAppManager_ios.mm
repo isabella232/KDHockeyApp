@@ -18,8 +18,7 @@
 
 #include "KDHockeyAppLiterals_p.h"
 
-#include <pthread.h> // needed by exception_handler.h
-#include <client/mac/handler/exception_handler.h>
+#include <client/ios/exception_handler_no_mach.h>
 
 #include <QCoreApplication>
 

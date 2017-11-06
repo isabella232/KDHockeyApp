@@ -105,6 +105,8 @@ class ExceptionHandler {
     UpdateNextID();  // Necessary to put dump_path_ in next_minidump_path_.
   }
 
+  string next_minidump_path() const { return next_minidump_path_; }
+
  private:
   // Install the SIG exception handlers.
   bool InstallHandlers();
