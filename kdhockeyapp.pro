@@ -1,11 +1,12 @@
 TEMPLATE = subdirs
 VERSION = 0.1
 
-SUBDIRS = \
-    examples \
-    src
+SUBDIRS = src
 
-examples.depends += src
+!skip_examples {
+    SUBDIRS += examples
+    examples.depends += src
+}
 
 DOCUMENTS = \
     INSTALL.md \
