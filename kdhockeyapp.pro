@@ -3,7 +3,8 @@ VERSION = 0.1
 
 SUBDIRS = src
 
-!skip_examples {
+skip_examples: KDHOCKEYAPP_SKIP *= examples
+!contains(KDHOCKEYAPP_SKIP, "examples") {
     SUBDIRS += examples
     examples.depends += src
 }
