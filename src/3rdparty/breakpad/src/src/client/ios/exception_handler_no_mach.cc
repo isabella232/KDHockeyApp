@@ -31,7 +31,7 @@
 #include <TargetConditionals.h>
 
 #include "client/mac/handler/minidump_generator.h"
-#include "client/ios/handler/exception_handler_no_mach.h"
+#include "client/ios/exception_handler_no_mach.h"
 
 #ifndef USE_PROTECTED_ALLOCATIONS
 #if TARGET_OS_TV

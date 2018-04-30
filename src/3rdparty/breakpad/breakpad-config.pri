@@ -25,5 +25,5 @@ android {
 } else: linux {
     BREAKPAD_LIBRARY = $$system_path($$BREAKPAD_BUILDDIR/src/client/linux/libbreakpad_client.a)
 } else: ios: CONFIG(device, device|simulator) {
-    BREAKPAD_LIBRARY = $$system_path($$BREAKPAD_BUILDDIR/libBreakpad.a)
+    BREAKPAD_LIBRARY = $$shadowed($$PWD/libbreakpad.a)
 }

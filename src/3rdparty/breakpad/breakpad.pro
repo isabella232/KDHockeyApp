@@ -79,21 +79,23 @@ android {
     DISTCLEAN_DEPS += breakpad_distclean
     CLEAN_DEPS += breakpad_clean
 } else: ios: CONFIG(device, device|simulator) {
-    BREAKPAD_SRCDIR=$$PWD/src/src/client/ios
+    SOURCES -= breakpad_dummy.cpp
+    INCLUDEPATH += src/src
 
-    breakpad_build.target = $$BREAKPAD_LIBRARY
-    breakpad_build.commands = xcodebuild \
-        BUILD_DIR=$$OUT_PWD \
-        CLANG_CXX_LIBRARY=libc++ \
-        GCC_PREPROCESSOR_DEFINITIONS="USE_PROTECTED_ALLOCATIONS=0" \
-        CONFIGURATION_BUILD_DIR=$$BREAKPAD_BUILDDIR \
-        CONFIGURATION_TEMP_DIR=$$BREAKPAD_BUILDDIR \
-        SHARED_PRECOMPS_DIR=$$OUT_PWD/PrecompiledHeaders \
-        -sdk iphoneos -project $$BREAKPAD_SRCDIR/Breakpad.xcodeproj build
-
-    QMAKE_EXTRA_TARGETS += breakpad_build
-    PRE_TARGETDEPS += $$breakpad_build.target
-    QMAKE_CLEAN += $$breakpad_build.target
+    SOURCES += \
+        src/src/client/ios/exception_handler_no_mach.cc \
+        src/src/client/mac/handler/breakpad_nlist_64.cc \
+        src/src/client/mac/handler/dynamic_images.cc \
+        src/src/client/mac/handler/minidump_generator.cc \
+        src/src/client/minidump_file_writer.cc \
+        src/src/common/convert_UTF.c \
+        src/src/common/mac/file_id.cc \
+        src/src/common/mac/macho_id.cc \
+        src/src/common/mac/macho_utilities.cc \
+        src/src/common/mac/macho_walker.cc \
+        src/src/common/mac/string_utilities.cc \
+        src/src/common/md5.cc \
+        src/src/common/string_conversion.cc
 } else {
     warning("Skipping breakpad, which is not supported for this platform")
 }
