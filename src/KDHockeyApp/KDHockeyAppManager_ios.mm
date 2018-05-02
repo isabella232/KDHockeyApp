@@ -124,6 +124,11 @@ void HockeyAppManager::Private::fillAppInfo(AppInfo *appInfo)
     appInfo->modelName = QString::fromUtf8(sysinfo.machine);
     appInfo->vendorName = "Apple"_l1;
     appInfo->deviceId = QString::fromLatin1(executableUuid().toHex());
+
+    const auto main = [NSBundle mainBundle];
+    appInfo->packageName = QString::fromNSString(main.bundleIdentifier);
+    appInfo->versionName = QString::fromNSString([main objectForInfoDictionaryKey:@"CFBundleShortVersionString"]);
+    appInfo->versionCode = QString::fromNSString([main objectForInfoDictionaryKey:@"CFBundleVersion"]).toInt();
 }
 
 std::string HockeyAppManager::Private::nextMiniDumpFileName() const
