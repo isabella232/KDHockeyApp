@@ -1,6 +1,8 @@
 TEMPLATE = lib
 
 CONFIG += no_private_qt_headers_warning static
+CONFIG -= debug_and_release debug_and_release_target
+
 QT = network qml-private
 
 include(../3rdparty/breakpad/breakpad.pri)
