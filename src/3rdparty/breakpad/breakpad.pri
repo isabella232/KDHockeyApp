@@ -1,9 +1,12 @@
 include(breakpad-config.pri)
 
 INCLUDEPATH += $$PWD/src/src
-LIBS -= $$BREAKPAD_LIBRARY
-LIBS += $$BREAKPAD_LIBRARY
-PRE_TARGETDEPS += $$BREAKPAD_LIBRARY
+
+!isEqual(TEMPLATE, lib)|CONFIG(shared, static|shared) {
+    LIBS -= $$BREAKPAD_LIBRARY
+    LIBS += $$BREAKPAD_LIBRARY
+    PRE_TARGETDEPS += $$BREAKPAD_LIBRARY
+}
 
 equals(TEMPLATE, app) {
     android: equals(QMAKE_HOST.os, Linux) {
