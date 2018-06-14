@@ -220,7 +220,11 @@ bool HockeyAppManager::Private::writeQmlTrace() const
     // NOTICE: This context is compromised. Complex operations, allocations must be avoided!
 
     if (const auto engine = qmlEngine ? QQmlEnginePrivate::getV4Engine(qmlEngine) : nullptr) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         char *const stackTrace = qt_v4StackTrace(engine->currentContext()); // FIXME: we should not allocate memory here!
+#else
+        char *const stackTrace = qt_v4StackTrace(engine->currentContext); // FIXME: we should not allocate memory here!
+#endif
 
         if (!stackTrace)
             return false;
