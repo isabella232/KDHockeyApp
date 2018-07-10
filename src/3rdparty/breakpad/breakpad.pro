@@ -3,101 +3,71 @@ include(breakpad-config.pri)
 TEMPLATE = lib
 CONFIG += static
 
+INCLUDEPATH += \
+    src/src
+
 SOURCES += \
-    breakpad_dummy.cpp
+    src/src/client/minidump_file_writer.cc \
+    src/src/common/convert_UTF.c \
+    src/src/common/md5.cc \
+    src/src/common/string_conversion.cc
 
 OTHER_FILES += \
     breakpad.pri \
     breakpad-config.pri
 
-# Custom targets to build the breakpad library -----------------------------------------------------
+# Platform specific build settings -----------------------------------------------------------------
 
-android {
-    breakpad_ndkbuild = +$$NDK_ROOT/ndk-build \
-        APP_PLATFORM=$$ANDROID_PLATFORM APP_ABI=$$ANDROID_TARGET_ARCH APP_STL=gnustl_shared \
-        APP_PROJECT_PATH=$$system_path($$PWD/src/android/sample_app) \
-        NDK_TOOLCHAIN_VERSION=$$NDK_TOOLCHAIN_VERSION \
-        TARGET_OUT=$$system_path($$BREAKPAD_BUILDDIR) \
-        -C $$system_path($$PWD/src/android/sample_app)
-
-    !silent: breakpad_ndkbuild += V=1
-
-    breakpad_build.depends = $$_PRO_FILE_ $$files(src/client/linux/*.cc, true)
-    breakpad_build.target = $$BREAKPAD_LIBRARY
-    breakpad_build.commands = $$breakpad_ndkbuild
-
-    breakpad_clean.commands = $$breakpad_ndkbuild clean
-
-    QMAKE_EXTRA_TARGETS += breakpad_build breakpad_clean
-    PRE_TARGETDEPS += $$breakpad_build.target
-    CLEAN_DEPS += breakpad_clean
-} else: linux: equals(QMAKE_HOST.os, Linux) {
-    BREAKPAD_CPPFLAGS = $$QMAKE_CPPFLAGS
-
-    for(incdir, QMAKE_INCDIR): BREAKPAD_CPPFLAGS += -I$$incdir
-
-    BREAKPAD_WARNINGS += \
+linux {
+    QMAKE_CXXFLAGS_WARN_ON += \
+        -Wno-missing-field-initializers \
+        -Wno-unused-parameters \
         -Wno-tautological-compare \
         -Wno-tautological-constant-out-of-range-compare \
         -Wno-unused-value
 
-    BREAKPAD_CFLAGS = $$QMAKE_CFLAGS
-    BREAKPAD_CXXFLAGS = $$QMAKE_CXXFLAGS
+    DEFINES += \
+        __STDC_LIMIT_MACROS
 
-    CONFIG(debug, debug|release) {
-        BREAKPAD_CFLAGS += $$QMAKE_CFLAGS_DEBUG
-        BREAKPAD_CXXFLAGS += $$QMAKE_CXXFLAGS_DEBUG
-    } else: CONFIG(release, debug|release) {
-         BREAKPAD_CFLAGS += $$QMAKE_CFLAGS_RELEASE
-         BREAKPAD_CXXFLAGS += $$QMAKE_CXXFLAGS_RELEASE
+    SOURCES += \
+        src/src/client/linux/crash_generation/crash_generation_client.cc \
+        src/src/client/linux/dump_writer_common/thread_info.cc \
+        src/src/client/linux/dump_writer_common/ucontext_reader.cc \
+        src/src/client/linux/handler/exception_handler.cc \
+        src/src/client/linux/handler/minidump_descriptor.cc \
+        src/src/client/linux/log/log.cc \
+        src/src/client/linux/microdump_writer/microdump_writer.cc \
+        src/src/client/linux/minidump_writer/linux_dumper.cc \
+        src/src/client/linux/minidump_writer/linux_ptrace_dumper.cc \
+        src/src/client/linux/minidump_writer/minidump_writer.cc \
+        src/src/common/linux/elfutils.cc \
+        src/src/common/linux/file_id.cc \
+        src/src/common/linux/guid_creator.cc \
+        src/src/common/linux/linux_libc_support.cc \
+        src/src/common/linux/memory_mapped_file.cc \
+        src/src/common/linux/safe_readlink.cc
+
+    android {
+        INCLUDEPATH += \
+            src/src/common/android/include
+
+        SOURCES += \
+            src/src/common/android/breakpad_getcontext.S
     }
-
-    breakpad_configure.depends = $$_PRO_FILE_ $$files(src/client/linux/*.cc, true)
-    breakpad_configure.target = $$BREAKPAD_BUILDDIR/Makefile
-    breakpad_configure.commands = \
-        mkdir -p $$BREAKPAD_BUILDDIR && \
-        cd $$BREAKPAD_BUILDDIR && \
-        $$PWD/src/configure \
-            $$shell_quote(CC=$$QMAKE_CC) \
-            $$shell_quote(CFLAGS=$$BREAKPAD_CFLAGS $$BREAKPAD_WARNINGS) \
-            $$shell_quote(CPPFLAGS=$$BREAKPAD_CPPFLAGS) \
-            $$shell_quote(CXX=$$QMAKE_CXX) \
-            $$shell_quote(CXXFLAGS=$$BREAKPAD_CXXFLAGS $$BREAKPAD_WARNINGS) \
-            $$shell_quote(LDFLAGS=$$QMAKE_LFLAGS)
-
-    silent: breakpad_configure.commands += --enable-silent-rules
-
-    breakpad_build.depends = breakpad_configure FORCE
-    breakpad_build.target = $$BREAKPAD_LIBRARY
-    breakpad_build.commands = +\$(MAKE) -C $$BREAKPAD_BUILDDIR
-
-    breakpad_clean.commands = +\$(MAKE) -C $$BREAKPAD_BUILDDIR clean
-    breakpad_distclean.commands = +\$(MAKE) -C $$BREAKPAD_BUILDDIR distclean
-
-    QMAKE_EXTRA_TARGETS += breakpad_build breakpad_clean breakpad_configure
-    PRE_TARGETDEPS += $$breakpad_build.target
-    DISTCLEAN_DEPS += breakpad_distclean
-    CLEAN_DEPS += breakpad_clean
 } else: ios: CONFIG(device, device|simulator) {
-    SOURCES -= breakpad_dummy.cpp
-    INCLUDEPATH += src/src
-
     SOURCES += \
         src/src/client/ios/exception_handler_no_mach.cc \
         src/src/client/mac/handler/breakpad_nlist_64.cc \
         src/src/client/mac/handler/dynamic_images.cc \
         src/src/client/mac/handler/minidump_generator.cc \
-        src/src/client/minidump_file_writer.cc \
-        src/src/common/convert_UTF.c \
         src/src/common/mac/file_id.cc \
         src/src/common/mac/macho_id.cc \
         src/src/common/mac/macho_utilities.cc \
         src/src/common/mac/macho_walker.cc \
-        src/src/common/mac/string_utilities.cc \
-        src/src/common/md5.cc \
-        src/src/common/string_conversion.cc
+        src/src/common/mac/string_utilities.cc
 } else {
     warning("Skipping breakpad, which is not supported for this platform")
+    SOURCES = breakpad_dummy.cpp # building a dummy to make XCode happy
 }
 
 # Custom targets to build breakpad's dump_syms tool ------------------------------------------------
@@ -123,6 +93,9 @@ equals(QMAKE_HOST.os, Linux) {
 # Install targets ----------------------------------------------------------------------------------
 
 target.path = $$LIBDIR
-target.extra = $$QMAKE_COPY $$BREAKPAD_LIBRARY $${QMAKE_PREFIX_STATICLIB}KDHockeyAppBreakpad.$${QMAKE_EXTENSION_STATICLIB}
+target.extra = \
+    $$QMAKE_COPY $$shell_path($$BREAKPAD_LIBRARY) \
+    $$shell_path($${QMAKE_PREFIX_STATICLIB}KDHockeyAppBreakpad.$${QMAKE_EXTENSION_STATICLIB})
 target.files += $${QMAKE_PREFIX_STATICLIB}KDHockeyAppBreakpad.$${QMAKE_EXTENSION_STATICLIB}
+
 INSTALLS += target
