@@ -1,3 +1,5 @@
+!isEmpty(KDHOCKEYAPP_CONFIG): CONFIG = $$KDHOCKEYAPP_CONFIG
+
 TEMPLATE = app
 
 QT += quickwidgets
