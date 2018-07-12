@@ -1,3 +1,5 @@
+!isEmpty(KDHOCKEYAPP_CONFIG): CONFIG = $$KDHOCKEYAPP_CONFIG
+
 include(breakpad-config.pri)
 
 TEMPLATE = lib
