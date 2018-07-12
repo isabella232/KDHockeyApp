@@ -44,7 +44,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifdef Q_CC_MSVC
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 extern "C" Q_QML_EXPORT char *qt_v4StackTrace(void *);
 
