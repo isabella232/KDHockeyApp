@@ -1,3 +1,5 @@
+!isEmpty(KDHOCKEYAPP_CONFIG): CONFIG = $$KDHOCKEYAPP_CONFIG
+
 TEMPLATE = lib
 
 CONFIG += no_private_qt_headers_warning static
