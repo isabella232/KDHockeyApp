@@ -5,6 +5,8 @@ TEMPLATE = lib
 CONFIG += no_private_qt_headers_warning static
 CONFIG -= debug_and_release debug_and_release_target
 
+INCLUDEPATH += $$system_path($$shadowed(include))
+
 QT = network qml-private
 
 include(../3rdparty/breakpad/breakpad.pri)
@@ -38,8 +40,16 @@ android {
         KDHockeyAppManager_generic.cpp
 }
 
-OTHER_FILES += \
-    KDHockeyApp.pri
+KDHockeyAppManager.config = verbatim
+KDHockeyAppManager.input = KDHockeyAppManager.h
+KDHockeyAppManager.output = include/KDHockeyAppManager.h
+
+QMAKE_SUBSTITUTES += \
+    KDHockeyAppManager
+
+DISTFILES += \
+    KDHockeyApp.pri \
+    $$KDHockeyAppManager.input
 
 # Install targets ----------------------------------------------------------------------------------
 
