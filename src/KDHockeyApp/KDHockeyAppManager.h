@@ -26,11 +26,12 @@
 #define KDHOCKEYAPPMANAGER_H
 
 #include <QObject>
-#include <QQmlListProperty>
 #include <QUrl>
+#include <QVariantList>
 
 class QNetworkAccessManager;
 class QNetworkReply;
+class QQmlEngine;
 
 namespace KDHockeyApp {
 

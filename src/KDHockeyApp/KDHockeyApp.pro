@@ -11,11 +11,8 @@ QT = network qml-private
 
 include(../3rdparty/breakpad/breakpad.pri)
 
-INSTALL_HEADERS = \
-    KDHockeyAppManager.h
-
 HEADERS = \
-    $$INSTALL_HEADERS \
+    KDHockeyAppManager.h \
     KDHockeyAppLiterals_p.h \
     KDHockeyAppManager_p.h \
     KDHockeyAppSoftAssert_p.h
@@ -40,15 +37,20 @@ android {
         KDHockeyAppManager_generic.cpp
 }
 
+KDHockeyAppConfig.input = KDHockeyAppConfig.h.qmake
+KDHockeyAppConfig.output = include/KDHockeyAppConfig.h
+
 KDHockeyAppManager.config = verbatim
 KDHockeyAppManager.input = KDHockeyAppManager.h
 KDHockeyAppManager.output = include/KDHockeyAppManager.h
 
 QMAKE_SUBSTITUTES += \
+    KDHockeyAppConfig \
     KDHockeyAppManager
 
 DISTFILES += \
     KDHockeyApp.pri \
+    $$KDHockeyAppConfig.input \
     $$KDHockeyAppManager.input
 
 # Install targets ----------------------------------------------------------------------------------
@@ -56,6 +58,8 @@ DISTFILES += \
 target.path = $$LIBDIR
 INSTALLS += target
 
+headers.files =  \
+    $$KDHockeyAppConfig.output \
+    $$KDHockeyAppManager.output
 headers.path = $$INCLUDEDIR/KDHockeyApp
-headers.files = $$INSTALLHEADERS
 INSTALLS += headers

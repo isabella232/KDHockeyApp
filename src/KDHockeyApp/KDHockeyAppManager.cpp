@@ -24,17 +24,24 @@
 
 #include "KDHockeyAppManager_p.h"
 
+#include "KDHockeyAppConfig.h"
 #include "KDHockeyAppLiterals_p.h"
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
 #include <private/qqmlengine_p.h>
+#endif
 
-#include <QFile>
+#include <QCoreApplication>
+#include <QDateTime>
 #include <QDirIterator>
+#include <QFile>
 #include <QHttpMultiPart>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QSettings>
 #include <QUrlQuery>
 #include <QVersionNumber>
@@ -51,7 +58,9 @@
 #include <unistd.h>
 #endif
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
 extern "C" Q_QML_EXPORT char *qt_v4StackTrace(void *);
+#endif
 
 namespace KDHockeyApp {
 
@@ -236,6 +245,8 @@ bool HockeyAppManager::Private::writeQmlTrace() const
 {
     // NOTICE: This context is compromised. Complex operations, allocations must be avoided!
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
+
     if (const auto engine = qmlEngine ? QQmlEnginePrivate::getV4Engine(qmlEngine) : nullptr) {
         const auto context = engineContext(engine, &engine->currentContext);
         const auto stackTrace = qt_v4StackTrace(context); // FIXME: we should not allocate memory here!
@@ -254,6 +265,8 @@ bool HockeyAppManager::Private::writeQmlTrace() const
 
         return written == static_cast<int>(toWrite);
     }
+
+#endif // KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
     return true;
 }
@@ -402,6 +415,7 @@ QNetworkAccessManager *HockeyAppManager::networkAccessManager() const
     return d->networkAccessManager();
 }
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
 /*!
     \fn void HockeyAppManager::setQmlEngine(QQmlEngine *engine)
@@ -419,6 +433,8 @@ QQmlEngine *HockeyAppManager::qmlEngine() const
 {
     return d->qmlEngine;
 }
+
+#endif // KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
 /*!
     \fn void HockeyAppManager::uploadCrashDumps() const
