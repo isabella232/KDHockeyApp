@@ -157,6 +157,18 @@ qint64 usageDuration(const QSettings &settings = QSettings{})
     return settings.value(s_settingsUsageDuration).toLongLong();
 }
 
+template<class Engine, class Context>
+Q_DECL_UNUSED inline Context engineContext(Engine *engine, Context *(Engine::*context)())
+{
+    return (engine->*context)();
+}
+
+template<class Engine, class Context>
+Q_DECL_UNUSED inline Context engineContext(Engine *, Context *context)
+{
+    return context;
+}
+
 } // namespace
 
 QByteArray HockeyAppManager::AppInfo::toByteArray() const
@@ -225,11 +237,8 @@ bool HockeyAppManager::Private::writeQmlTrace() const
     // NOTICE: This context is compromised. Complex operations, allocations must be avoided!
 
     if (const auto engine = qmlEngine ? QQmlEnginePrivate::getV4Engine(qmlEngine) : nullptr) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-        char *const stackTrace = qt_v4StackTrace(engine->currentContext()); // FIXME: we should not allocate memory here!
-#else
-        char *const stackTrace = qt_v4StackTrace(engine->currentContext); // FIXME: we should not allocate memory here!
-#endif
+        const auto context = engineContext(engine, &engine->currentContext);
+        const auto stackTrace = qt_v4StackTrace(context); // FIXME: we should not allocate memory here!
 
         if (!stackTrace)
             return false;
