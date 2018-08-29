@@ -93,7 +93,8 @@ public slots:
         std::function<void(int)> crashForTesting = [&](int n) {
             if (0 >= n) {
                 qInfo("provoking segfault for testing purposes");
-                ((char *) nullptr)[0] = 'X';
+                char *const crashingCharPointer = nullptr;
+                crashingCharPointer[0] = 'X';
             }
 
             crashForTesting(n - 1);

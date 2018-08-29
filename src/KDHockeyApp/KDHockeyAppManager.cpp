@@ -479,7 +479,7 @@ QNetworkReply *HockeyAppManager::uploadCrashDump(const QString &dumpFileName) co
     const auto reply = d->networkAccessManager()->post(request, formData.data());
     formData.take()->setParent(reply);
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply, crashId, crashFiles] {
+    connect(reply, &QNetworkReply::finished, this, [reply, crashId, crashFiles] {
         if (reply->error() == QNetworkReply::NoError) {
             for (const auto &fileName: crashFiles)
                 QFile::remove(fileName);

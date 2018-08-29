@@ -37,12 +37,12 @@ namespace Literals {
  *
  * This is most useful to use fast-past optimizations during string comparison and similar.
  */
-inline constexpr QLatin1String operator"" _l1 (const char *str, std::size_t len)
+constexpr QLatin1String operator"" _l1 (const char *str, std::size_t len)
 {
     return QLatin1String(str, static_cast<int>(len));
 }
 
-inline constexpr QChar operator"" _l1 (char ch)
+constexpr QChar operator"" _l1 (char ch)
 {
     return QChar::fromLatin1(ch);
 }
