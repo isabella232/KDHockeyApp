@@ -27,6 +27,6 @@ equals(TEMPLATE, app) {
 
     !isEmpty(dumpsyms.commands): CONFIG(release, debug|release) {
         QMAKE_EXTRA_TARGETS += dumpsyms
-        QMAKE_POST_LINK += $$dumpsyms.commands
+        QMAKE_POST_LINK += $$escape_expand(\\n\\t)$$dumpsyms.commands
     }
 }
