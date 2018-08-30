@@ -8,7 +8,7 @@ INCLUDEPATH += $$PWD/src/src
     PRE_TARGETDEPS += $$BREAKPAD_LIBRARY
 }
 
-equals(TEMPLATE, app) {
+equals(TEMPLATE, app): CONFIG(release, debug|release) {
     android: equals(QMAKE_HOST.os, Linux) {
         dumpsyms.commands = \
             $$shell_quote(CXX=$$QMAKE_CXX) \
@@ -25,8 +25,8 @@ equals(TEMPLATE, app) {
             { rm $${TARGET_FILENAME}; false; }
     }
 
-    !isEmpty(dumpsyms.commands): CONFIG(release, debug|release) {
+    !isEmpty(dumpsyms.commands): !contains(QMAKE_EXTRA_TARGETS, dumpsyms) {
         QMAKE_EXTRA_TARGETS += dumpsyms
-        QMAKE_POST_LINK += $$dumpsyms.commands
+        QMAKE_POST_LINK += $$escape_expand(\\n\\t)$$dumpsyms.commands
     }
 }
