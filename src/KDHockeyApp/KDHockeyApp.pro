@@ -12,12 +12,13 @@ QT = network qml-private
 include(../3rdparty/breakpad/breakpad.pri)
 
 HEADERS = \
-    KDHockeyAppManager.h \
     KDHockeyAppLiterals_p.h \
+    KDHockeyAppManager.h \
     KDHockeyAppManager_p.h \
     KDHockeyAppSoftAssert_p.h
 
 SOURCES = \
+    KDHockeyAppLiterals.cpp \
     KDHockeyAppManager.cpp \
     KDHockeyAppSoftAssert.cpp
 
