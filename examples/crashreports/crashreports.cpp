@@ -22,15 +22,19 @@
 // Contact info@kdab.com if any conditions of this licensing is not clear to you.
 //
 
+#include <KDHockeyAppConfig.h>
 #include <KDHockeyAppManager.h>
 
 #include <QApplication>
 #include <QBoxLayout>
 #include <QMainWindow>
 #include <QPushButton>
+
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWidget>
+#endif // KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
 #include <functional>
 
@@ -58,27 +62,30 @@ public:
         // crashes in initialization code are reported.
         hockeyApp.uploadCrashDumps();
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
         // We also create the QML engine early to ensure to receive QML
         // backtraces for crashes while loading QML files.
         QQmlEngine qml;
         qml.rootContext()->setContextProperty("_example", this);
         hockeyApp.setQmlEngine(&qml);
+#endif // KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
         // Now only some widgets need to be setup and shown.
         // Nothing HockeyApp specific for the rest of this method.
         QMainWindow window;
         window.setCentralWidget(new QWidget{&window});
+        QBoxLayout layout{QBoxLayout::TopToBottom, window.centralWidget()};
 
         QPushButton crashFromCxx{tr("Crash from C++"), window.centralWidget()};
         connect(&crashFromCxx, &QPushButton::clicked, this, &CrashReports::crashTheAppNow);
+        layout.addWidget(&crashFromCxx);
 
+#ifdef KDHOCKEYAPP_QMLSUPPORT_ENABLED
         QQuickWidget crashFromQml{&qml, window.centralWidget()};
         crashFromQml.setResizeMode(QQuickWidget::SizeRootObjectToView);
         crashFromQml.setSource(QUrl{"qrc:/crashreports.qml"});
-
-        QBoxLayout layout{QBoxLayout::TopToBottom, window.centralWidget()};
-        layout.addWidget(&crashFromCxx);
         layout.addWidget(&crashFromQml);
+#endif // KDHOCKEYAPP_QMLSUPPORT_ENABLED
 
         window.show();
 
