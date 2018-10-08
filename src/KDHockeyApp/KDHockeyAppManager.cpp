@@ -294,7 +294,7 @@ HockeyAppManager::AppInfo HockeyAppManager::Private::makeAppInfo()
     fillAppInfo(&appInfo);
 
     if (appInfo.platformVersion.isEmpty())
-        appInfo.platformVersion = QSysInfo::productType() + ' '_l1 + QSysInfo::productVersion();
+        appInfo.platformVersion = QSysInfo::productVersion();
     if (appInfo.platformBuild.isEmpty())
         appInfo.platformBuild = QSysInfo::kernelType() + ' '_l1 + QSysInfo::kernelVersion();
     if (appInfo.packageName.isEmpty())
