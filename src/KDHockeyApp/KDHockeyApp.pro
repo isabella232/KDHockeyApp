@@ -6,6 +6,7 @@ CONFIG += no_private_qt_headers_warning static
 CONFIG -= debug_and_release debug_and_release_target
 
 INCLUDEPATH += $$system_path($$shadowed(include))
+DEPENDPATH += $$system_path($$shadowed(include))
 
 QT = network qml-private
 

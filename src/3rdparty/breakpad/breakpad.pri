@@ -1,6 +1,7 @@
 include(breakpad-config.pri)
 
 INCLUDEPATH += $$PWD/src/src
+DEPENDPATH += $$PWD/src/src
 
 !isEqual(TEMPLATE, lib)|CONFIG(shared, static|shared) {
     LIBS -= $$BREAKPAD_LIBRARY
