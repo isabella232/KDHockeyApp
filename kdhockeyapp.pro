@@ -44,7 +44,7 @@ cache(DATAROOTDIR)
 isEmpty(DATADIR): DATADIR = $$DATAROOTDIR
 cache(DATADIR)
 
-isEmpty(DOCDIR): DOCDIR = $$DATAROOT/doc/kdhockeyapp
+isEmpty(DOCDIR): DOCDIR = $$DATAROOTDIR/doc/kdhockeyapp
 cache(DOCDIR)
 
 docs.path = $$DOCDIR
