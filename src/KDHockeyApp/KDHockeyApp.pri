@@ -1,6 +1,8 @@
 KDHOCKEYAPP_LIBRARY_FILENAME = $$shadowed($$PWD/$${QMAKE_PREFIX_STATICLIB}KDHockeyApp.$${QMAKE_EXTENSION_STATICLIB})
 
 INCLUDEPATH += $$system_path($$shadowed(include))
+DEPENDPATH += $$system_path($$shadowed(include))
+
 QT += network qml
 
 android: QT += androidextras

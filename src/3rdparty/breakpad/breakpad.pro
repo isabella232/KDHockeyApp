@@ -7,6 +7,8 @@ CONFIG += static
 
 INCLUDEPATH += \
     src/src
+DEPENDPATH += \
+    src/src
 
 SOURCES += \
     src/src/client/minidump_file_writer.cc \
@@ -51,6 +53,8 @@ linux {
 
     android {
         INCLUDEPATH += \
+            src/src/common/android/include
+        DEPENDPATH += \
             src/src/common/android/include
 
         SOURCES += \
